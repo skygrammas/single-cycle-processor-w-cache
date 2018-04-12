@@ -1,6 +1,6 @@
 ToDo:
 
-- Write instruction $
+- Write instruction $ done!
 - Write data $
 - Add instruction $ to the fetch stage (Deeshai)
 - Add data $ to the memory stage (only for store and load) (Deeshai)

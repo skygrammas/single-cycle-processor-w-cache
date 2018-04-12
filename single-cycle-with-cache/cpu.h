@@ -47,6 +47,8 @@ struct cpu_counter {
 
 extern struct cpu_context cpu_ctx;
 extern struct cpu_counter cpu_cntr;
+extern struct instructionCache iCache;
+extern struct dataCache dCache;
 
 struct Control {
     uint32_t MemToReg;
@@ -183,5 +185,5 @@ int writeback( struct MEM_WB_buffer *in );
 
 int parse_instruction(uint32_t *bits, struct instruction *fields);
 int parse_address(uint32_t *requested_address, struct Address *fields);
-int instructionCache(uint32_t *address, struct instructionCache *iCache);
+int instructionCache(uint32_t *address);
 int dataCache(uint32_t *address, struct dataCache *dCache);

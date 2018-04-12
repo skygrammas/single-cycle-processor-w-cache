@@ -18,6 +18,8 @@
 
 struct cpu_context cpu_ctx;
 struct cpu_counter cpu_cntr;
+struct instructionCache iCache;
+struct dataCache dCache;
 
 int fetch( struct IF_ID_buffer *out )
 {
@@ -29,6 +31,8 @@ int fetch( struct IF_ID_buffer *out )
 
     // Increment PC.
     pc = pc + 1;
+
+    instructionCache(&pc, iCache)
 
     out->next_pc = pc;
     out->instruction = instruction;
@@ -772,24 +776,23 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
     return 0;
 }
 
-int instructionCache(uint32_t *address, struct instructionCache *iCache) {
+int instructionCache(uint32_t *address) {
     struct Address current_request;
     parse_address(*address, *current_request);
     uint32_t data;
     if ((iCache->way1[current_request->index].tag == current_request->tag) && (iCache->way1[current_request->index].valid)) {
-<<<<<<< HEAD
         //then it's a hit
         //increment LRU metadata
         uint32_t data = iCache->way1[current_request->index].data[current_request->offset];
         //return data
-=======
         data = iCache->way1[current_request->index].data[current_request->offset];
->>>>>>> fbe31bb13ec55618f05dc2e04e81d25df0d87f63
     } else {
+        iCache.way1[current_request->index].tag = current_request->tag;
+        iCache.way1[current_request->index].valid = true;
         for (int i = 0; i < 4; i++){ // i < offset
-            iCache->way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i]
+            iCache.way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i];
         }
-        data = iCache->way1[current_request->index].data[current_request->offset];
+        data = iCache.way1[current_request->index].data[current_request->offset];
     }
     return data;
 }
@@ -822,6 +825,3 @@ int dataCache(uint32_t *address, struct dataCache *dCache) {
         //add to cache
         //edit LRU metadata
     }
-}
-
-
