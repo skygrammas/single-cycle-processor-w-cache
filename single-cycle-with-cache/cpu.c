@@ -775,20 +775,20 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
     return 0;
 }
 
-int instructionCache(uint32_t *address, struct instructionCache *iCache) {
+int instructionCache(uint32_t *address) {
     struct Address current_request;
     parse_address(*address, *current_request);
     uint32_t data;
-    if ((iCache->way1[current_request->index].tag == current_request->tag) && (iCache->way1[current_request->index].valid)) {
-        data = iCache->way1[current_request->index].data[current_request->offset];
+    if ((iCache.way1[current_request->index].tag == current_request->tag) && (iCache.way1[current_request->index].valid)) {
+        data = iCache.way1[current_request->index].data[current_request->offset];
     } else {
-        iCache->way1[current_request->index].tag = current_request->tag;
-        iCache->way1[current_request->index].valid = true;
+        iCache.way1[current_request->index].tag = current_request->tag;
+        iCache.way1[current_request->index].valid = true;
         for (int i = 0; i < 4; i++){ // i < offset
-            iCache->way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i];
+            iCache.way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i];
 
         }
-        data = iCache->way1[current_request->index].data[current_request->offset];
+        data = iCache.way1[current_request->index].data[current_request->offset];
     }
     return data;
 }
