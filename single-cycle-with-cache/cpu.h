@@ -129,14 +129,14 @@ struct MUX_output {
 };
 
 struct instructionCache {
- directBlock way1[256];
+ block way1[256];
 };
 
 struct dataCache {
- setBlock way1[256];
- setBlock way2[256];
- setBlock way3[256];
- setBlock way4[256];
+ block way1[256];
+ block way2[256];
+ block way3[256];
+ block way4[256];
 };
 
 struct L1Cache {
@@ -150,15 +150,8 @@ struct Address {
  uint32_t index;
 };
 
-struct directBlock {
- uint32_t array1[block_size];
- uint32_t tag;
- uint32_t valid;
- uint32_t LRU; //2 bits
-};
-
-struct setBlock {
- uint32_t array1[block_size];
+struct block {
+ uint32_t data[block_size];
  uint32_t tag;
  uint32_t valid;
  uint32_t LRU; //2 bits
