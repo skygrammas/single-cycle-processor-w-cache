@@ -18,6 +18,7 @@
 
 struct cpu_context cpu_ctx;
 struct cpu_counter cpu_cntr;
+struct instructionCache iCache;
 
 int fetch( struct IF_ID_buffer *out )
 {
@@ -29,6 +30,8 @@ int fetch( struct IF_ID_buffer *out )
 
     // Increment PC.
     pc = pc + 1;
+
+    instructionCache(&pc, iCache)
 
     out->next_pc = pc;
     out->instruction = instruction;
@@ -607,7 +610,7 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
 
 	out->registerDestination = in->registerDestination;
     out->ALU_result = in->ALU_result;
-    out->control_signals = in->control_signals;
+    out->control_signals = in->control_signals; 
 
     printf("result: %d\n", out->ALU_result);
     out->next_pc = in->next_pc;
@@ -818,6 +821,6 @@ int dataCache(uint32_t *address, struct dataCache *dCache) {
         //add to cache
         //edit LRU metadata
     }
-}
+
 
 
