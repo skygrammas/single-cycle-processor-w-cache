@@ -157,6 +157,13 @@ struct directBlock {
  uint32_t LRU; //2 bits
 };
 
+struct blockArray {
+ uint32_t LRU_1;
+ uint32_t LRU_2;
+ uint32_t LRU_3;
+ uint32_t LRU_4;
+};
+
 struct setBlock {
  uint32_t array1[block_size];
  uint32_t tag;
@@ -176,6 +183,5 @@ int writeback( struct MEM_WB_buffer *in );
 
 int parse_instruction(uint32_t *bits, struct instruction *fields);
 int parse_address(uint32_t *requested_address, struct Address *fields);
-int instructionCache(uint32_t *address, struct instructionCache *iCache;
-);
-int dataCache(uint32_t *address);
+int instructionCache(uint32_t *address, struct instructionCache *iCache);
+int dataCache(uint32_t *address, struct dataCache *dCache);
