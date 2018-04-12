@@ -1,0 +1,10 @@
+ToDo:
+
+- Write instruction $
+- Write data $
+- Add instruction $ to the fetch stage
+- Add data $ to the memory stage
+- implement LRU metadata
+- handle misses
+- Test instruction $
+- Test data $
