@@ -12,8 +12,8 @@
 #include <stdint.h>
 
 struct cpu_context {
-	uint32_t PC;
-	uint32_t GPR[32];
+    uint32_t PC;
+    uint32_t GPR[32];
 };
 
 struct cpu_counter {
@@ -63,8 +63,8 @@ struct Control {
 };
 
 struct IF_ID_buffer {
-	uint32_t instruction;
-	uint32_t next_pc;
+    uint32_t instruction;
+    uint32_t next_pc;
 };
 
 struct ID_EX_buffer {
@@ -95,8 +95,8 @@ struct EX_MEM_buffer {
 };
 
 struct MEM_WB_buffer {
-	uint32_t rd;
-	uint32_t registerDestination;
+    uint32_t rd;
+    uint32_t registerDestination;
     uint32_t data;
     uint32_t ALU_result;
     uint32_t next_pc;
@@ -130,20 +130,44 @@ struct MUX_output {
  uint32_t output;
 };
 
-struct instructionCache {
- block way1[256];
+
+struct blockArray {
+ uint32_t LRU_1;
+ uint32_t LRU_2;
+ uint32_t LRU_3;
+ uint32_t LRU_4;
 };
 
+struct directBlock {
+
+ uint32_t data[4];
+ uint32_t tag;
+ uint32_t valid;
+};
+
+struct setBlock {
+
+ struct blockArray data[4];
+ uint32_t tag;
+ uint32_t valid;
+ uint32_t LRU; //2 bits
+};
+
+struct instructionCache {
+ struct directBlock way1[256];
+};
+
+
 struct dataCache {
- block way1[256];
- block way2[256];
- block way3[256];
- block way4[256];
+ struct setBlock way1[256];
+ struct setBlock way2[256];
+ struct setBlock way3[256];
+ struct setBlock way4[256];
 };
 
 struct L1Cache {
- instructionCache iCache;
- dataCache dCache;
+ struct instructionCache iCache;
+ struct dataCache dCache;
 };
 
 struct Address {
@@ -152,27 +176,9 @@ struct Address {
  uint32_t index;
 };
 
-struct directBlock {
 
- uint32_t data[block_size];
- uint32_t tag;
- uint32_t valid;
-};
 
-struct setBlock {
 
- blockArray data[block_size];
- uint32_t tag;
- uint32_t valid;
- uint32_t LRU; //2 bits
-};
-
-struct blockArray {
- uint32_t LRU_1;
- uint32_t LRU_2;
- uint32_t LRU_3;
- uint32_t LRU_4;
-};
 
 
 int ALU(struct ALU_input *in, struct ALU_output *out);
@@ -188,4 +194,4 @@ int writeback( struct MEM_WB_buffer *in );
 int parse_instruction(uint32_t *bits, struct instruction *fields);
 int parse_address(uint32_t *requested_address, struct Address *fields);
 int instructionCache(uint32_t *address);
-int dataCache(uint32_t *address, struct dataCache *dCache);
+int dataCache(uint32_t *address);

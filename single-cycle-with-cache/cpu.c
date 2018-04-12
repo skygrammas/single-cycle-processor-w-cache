@@ -23,33 +23,33 @@ struct dataCache dCache;
 
 int fetch( struct IF_ID_buffer *out )
 {
-	// Grab pc from global state.
-	uint32_t pc = cpu_ctx.PC;
+    // Grab pc from global state.
+    uint32_t pc = cpu_ctx.PC;
 
-	// Grab instruction at pc from memory.
-    uint32_t instruction = instruction_memory[pc];
+    // Grab instruction at pc from memory.
+    uint32_t instruction = instructionCache(&pc);
 
     // Increment PC.
     pc = pc + 1;
 
-    instructionCache(&pc, iCache)
+    
 
     out->next_pc = pc;
     out->instruction = instruction;
-	return 0;
+    return 0;
 }
 
 int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
 {
     struct instruction instrn;
-	parse_instruction(&in->instruction, &instrn);
+    parse_instruction(&in->instruction, &instrn);
 
     out->next_pc = in->next_pc;
     out->read_data_1 = cpu_ctx.GPR[instrn.rs];
     out->read_data_2 = cpu_ctx.GPR[instrn.rt];
     cpu_cntr.cycle += 1;
 
-	switch (instrn.op) {
+    switch (instrn.op) {
     //r-type
     case 0:
         switch (instrn.funct) {
@@ -64,7 +64,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 2;
             out->control_signals.jump = -1;
-			out->op = 32;
+            out->op = 32;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -82,7 +82,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 0;
             out->control_signals.jump = -1;
-			out->op = 36;
+            out->op = 36;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -100,7 +100,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 12;
             out->control_signals.jump = -1;
-			out->op = 39;
+            out->op = 39;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -118,7 +118,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 1;
             out->control_signals.jump = -1;
-			out->op = 37;
+            out->op = 37;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -136,7 +136,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 7;
             out->control_signals.jump = -1;
-			out->op = 42;
+            out->op = 42;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -154,7 +154,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 3;
             out->control_signals.jump = -1;
-			out->op = 0;
+            out->op = 0;
             out->shamt = instrn.shamt;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -177,7 +177,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 8;
             out->control_signals.jump = -1;
-			out->op = 2;
+            out->op = 2;
             out->shamt = instrn.shamt;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -195,7 +195,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 6;
             out->control_signals.jump = -1;
-			out->op = 34;
+            out->op = 34;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -213,7 +213,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 9;
             out->control_signals.jump = -1;
-			out->op = 3;
+            out->op = 3;
             out->shamt = instrn.shamt;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -231,7 +231,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 4;
             out->control_signals.jump = -1;
-			out->op = 38;
+            out->op = 38;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -249,7 +249,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             out->control_signals.Branch = 0;
             out->control_signals.ALU_op = 13;
             out->control_signals.jump = -1;
-			out->op = 12;
+            out->op = 12;
             out->shamt = 0;
             out->rt = instrn.rt;
             out->rd = instrn.rd;
@@ -324,7 +324,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 1;
         out->control_signals.ALU_op = 6;
         out->control_signals.jump = -1;
-			out->op = 4;
+            out->op = 4;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -342,7 +342,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 1;
         out->control_signals.ALU_op = 6;
         out->control_signals.jump = -1;
-			out->op = 5;
+            out->op = 5;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -360,7 +360,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 0;
         out->control_signals.ALU_op = 14;
         out->control_signals.jump = -1;
-		out->op = 15;
+        out->op = 15;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -378,7 +378,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 0;
         out->control_signals.ALU_op = 2;
         out->control_signals.jump = -1;
-			out->op = 35;
+            out->op = 35;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -396,7 +396,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 0;
         out->control_signals.ALU_op = 1;
         out->control_signals.jump = -1;
-			out->op = 13;
+            out->op = 13;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -414,7 +414,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 0;
         out->control_signals.ALU_op = 7;
         out->control_signals.jump = -1;
-			out->op = 10;
+            out->op = 10;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -432,7 +432,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 0;
         out->control_signals.ALU_op = 4;
         out->control_signals.jump = -1;
-			out->op = 14;
+            out->op = 14;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -450,7 +450,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = 0;
         out->control_signals.ALU_op = 2;
         out->control_signals.jump = -1;
-			out->op = 43;
+            out->op = 43;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -469,7 +469,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = -1;
         out->control_signals.ALU_op = -1;
         out->control_signals.jump = 1;
-		out->op = 2;
+        out->op = 2;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
@@ -487,14 +487,14 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->control_signals.Branch = -1;
         out->control_signals.ALU_op = -1;
         out->control_signals.jump = 1;
-		out->op = 3;
+        out->op = 3;
         out->shamt = 0;
         out->rt = instrn.rt;
         out->rd = instrn.rd;
         out->rs = instrn.rs;
         cpu_cntr.jal_c += 1;
         break;
-	}
+    }
 
     SIGN_EXTEND(&instrn.bit_number, &out->sign_extend);
 
@@ -514,29 +514,29 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
     }
     printf("\nop:%d\n", out->op);
 
-	return 0;
+    return 0;
 }
 
 int execute( struct ID_EX_buffer *in, struct EX_MEM_buffer *out )
 {
     // RegDst MUX
     struct MUX_input reg_dst_m_in;
- 	struct MUX_output reg_dst_m_out;
+    struct MUX_output reg_dst_m_out;
 
- 	reg_dst_m_in.in0 = in->regDst0;
- 	reg_dst_m_in.in1 = in->regDst1;
+    reg_dst_m_in.in0 = in->regDst0;
+    reg_dst_m_in.in1 = in->regDst1;
     reg_dst_m_in.in2 = 31;
     printf("\nregdst: %d\n", in->control_signals.RegDst);
- 	reg_dst_m_in.select = in->control_signals.RegDst;
+    reg_dst_m_in.select = in->control_signals.RegDst;
     MUX(&reg_dst_m_in, &reg_dst_m_out);
     out->registerDestination = reg_dst_m_out.output;
     // ALUSRC
     struct MUX_input alu_src_m_in;
- 	struct MUX_output alu_src_m_out;
+    struct MUX_output alu_src_m_out;
 
- 	alu_src_m_in.in0 = in->read_data_2;
- 	alu_src_m_in.in1 = in->sign_extend;
- 	alu_src_m_in.select = in->control_signals.ALU_src;
+    alu_src_m_in.in0 = in->read_data_2;
+    alu_src_m_in.in1 = in->sign_extend;
+    alu_src_m_in.select = in->control_signals.ALU_src;
 
     MUX(&alu_src_m_in, &alu_src_m_out);
 
@@ -580,50 +580,50 @@ int execute( struct ID_EX_buffer *in, struct EX_MEM_buffer *out )
     out->sign_extend = in->sign_extend;
     out->registerDestination = reg_dst_m_out.output;
 
-	return 0;
+    return 0;
 }
 
 int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
 {
-	// If MemRead then get data from data memory
-	if (in->control_signals.MemRead == 1) {
+    // If MemRead then get data from data memory
+    if (in->control_signals.MemRead == 1) {
         printf("Alu result: %d", in->ALU_result);
       if (in->ALU_result >= 1024) {
         printf("Memory address out of range\n");
       } else {
         out->data = data_memory[in->ALU_result];
       }
-	}
+    }
     // If MemWrite then write to the data memeory
-	if (in->control_signals.MemWrite == 1) {
+    if (in->control_signals.MemWrite == 1) {
       data_memory[in->ALU_result] = in->read_data_2;
-	}
+    }
 
         printf("BRANCH DEBUG\nnext:%d,sign_extend:%d\n", in->next_pc, in->sign_extend);
     // If Branch then update pc
-	if (in->ALU_zero == 1 && in->control_signals.Branch == 1) {
+    if (in->ALU_zero == 1 && in->control_signals.Branch == 1) {
         printf("BRANCH DEBUG\nnext:%d,sign_extend:%d\n", in->next_pc, in->sign_extend);
-		cpu_ctx.PC = in->next_pc + in->sign_extend;
+        cpu_ctx.PC = in->next_pc + in->sign_extend;
         printf("PC:%d", cpu_ctx.PC);
-	} else {
+    } else {
         cpu_ctx.PC += 1;
     }
 
-	out->registerDestination = in->registerDestination;
+    out->registerDestination = in->registerDestination;
     out->ALU_result = in->ALU_result;
     out->control_signals = in->control_signals; 
 
     printf("result: %d\n", out->ALU_result);
     out->next_pc = in->next_pc;
-	return 0;
+    return 0;
 }
 
 int writeback( struct MEM_WB_buffer *in )
 {
-	// If mem to reg then write data in register.
+    // If mem to reg then write data in register.
     printf("rd:%d\n", in->registerDestination);
 
-	if (in->control_signals.RegWrite == 1) {
+    if (in->control_signals.RegWrite == 1) {
         cpu_ctx.GPR[in->registerDestination] = in->ALU_result;
     }
     if (in->control_signals.RegWrite == 0) {
@@ -636,28 +636,28 @@ int writeback( struct MEM_WB_buffer *in )
         cpu_ctx.GPR[in->registerDestination] = in->data;
     }
 
-	return 0;
+    return 0;
 }
 
 int ALU(struct ALU_input *in, struct ALU_output *out)
 {
 
-	switch (in->control) {
-		// AND (and, andi, lw, sw)
-		case 0:
-			out->result = in->in1 & in->in2;
+    switch (in->control) {
+        // AND (and, andi, lw, sw)
+        case 0:
+            out->result = in->in1 & in->in2;
             out->zero = 0;
-			break;
-		// OR (or, ori)
-		case 1:
-			out->result = in->in1 | in->in2;
+            break;
+        // OR (or, ori)
+        case 1:
+            out->result = in->in1 | in->in2;
             out->zero = 0;
-			break;
-		// ADD (add, addi)
-		case 2:
-			out->result = in->in1 + in->in2;
+            break;
+        // ADD (add, addi)
+        case 2:
+            out->result = in->in1 + in->in2;
             out->zero = 0;
-			break;
+            break;
         // SHIFT LEFT (sll)
         case 3:
             out->result =  in->in1 << in->in2;
@@ -669,11 +669,11 @@ int ALU(struct ALU_input *in, struct ALU_output *out)
             out->zero = 0;
             break;
         // SUBTRACT (sub, beq, bne)
-		case 6:
-			out->result = in->in1 - in->in2;
+        case 6:
+            out->result = in->in1 - in->in2;
             out->zero = 0;
-			break;
-		// SET ON LESS THAN (slt, slti)
+            break;
+        // SET ON LESS THAN (slt, slti)
         case 7:
             if (in->in1 < in->in2) {
                 out->result = 1;
@@ -709,26 +709,26 @@ int ALU(struct ALU_input *in, struct ALU_output *out)
             out->result = (in->in2 << 16);
             out->zero = 0;
             break;
-	}
+    }
     printf("ALU DEBUG\nin1:%d,in2:%d,out:%d\n", in->in1, in->in2, out->result);
-	return 0;
+    return 0;
 }
 
 int MUX(struct MUX_input *in, struct MUX_output *out)
 {
-	switch (in->select) {
-		case 0:
-			out->output = in->in0;
-			break;
-		case 1:
-    		out->output = in->in1;
+    switch (in->select) {
+        case 0:
+            out->output = in->in0;
+            break;
+        case 1:
+            out->output = in->in1;
             break;
         case 2:
             out->output = in->in2;
             break;
-	}
+    }
     printf("MUX DEBUG\nselect:%d\nin0:%d, in1:%d, in2:%d, out:%d\n", in->select, in->in0, in->in1, in->in2, out->output);
-	return 0;
+    return 0;
 }
 
 int parse_instruction(uint32_t *bits, struct instruction *fields) {
@@ -778,50 +778,51 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
 
 int instructionCache(uint32_t *address) {
     struct Address current_request;
-    parse_address(*address, *current_request);
+    parse_address(address, &current_request);
     uint32_t data;
-    if ((iCache.way1[current_request->index].tag == current_request->tag) && (iCache.way1[current_request->index].valid)) {
-        data = iCache.way1[current_request->index].data[current_request->offset];
+    if ((iCache.way1[current_request.index].tag == current_request.tag) && (iCache.way1[current_request.index].valid)) {
+        data = iCache.way1[current_request.index].data[current_request.offset];
     } else {
-        iCache.way1[current_request->index].tag = current_request->tag;
-        iCache.way1[current_request->index].valid = true;
+        iCache.way1[current_request.index].tag = current_request.tag;
+        iCache.way1[current_request.index].valid = 1;
         for (int i = 0; i < 4; i++){ // i < offset
-            iCache.way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i];
 
+            uint32_t index =  (uint32_t) floor(*address/4) * 4 ;
+            iCache.way1[current_request.index].data[i] = instruction_memory[index + i];
         }
-        data = iCache.way1[current_request->index].data[current_request->offset];
+        data = iCache.way1[current_request.index].data[current_request.offset];
     }
     return data;
 }
 
-int dataCache(uint32_t *address, struct dataCache *dCache) {
+int dataCache(uint32_t *address) {
     struct Address current_request;
-    parse_address(*address, *current_request);
-    if ((dCache->way1[current_request->index].tag == current_request->tag) && (dCache->way1[current_request->index].valid)) {
+    parse_address(address, &current_request);
+    if ((dCache.way1[current_request.index].tag == current_request.tag) && (dCache.way1[current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way1[current_request->index].data[current_request->offset];
+        uint32_t data = dCache.way1[current_request.index].data[current_request.offset].LRU_1;
         //return data
-    } else if ((dCache->way2[current_request->index].tag == current_request->tag) && (dCache->way2[current_request->index].valid)) {
+    } else if ((dCache.way2[current_request.index].tag == current_request.tag) && (dCache.way2[current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way2[current_request->index].data[current_request->offset];
+        uint32_t data = dCache.way2[current_request.index].data[current_request.offset].LRU_1;
         //return data
-    } else if ((dCache->way3[current_request->index].tag == current_request->tag) && (dCache->way3[current_request->index].valid)) {
+    } else if ((dCache.way3[current_request.index].tag == current_request.tag) && (dCache.way3[current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way3[current_request->index].data[current_request->offset];
+        uint32_t data = dCache.way3[current_request.index].data[current_request.offset].LRU_1;
         //return data
-    } else if ((dCache->way4[current_request->index].tag == current_request->tag) && (dCache->way4[current_request->index].valid)) {
+    } else if ((dCache.way4[current_request.index].tag == current_request.tag) && (dCache.way4[current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way4[current_request->index].data[current_request->offset];
+        uint32_t data = dCache.way4[current_request.index].data[current_request.offset].LRU_1;
         //return data
     } else {
         //it's a miss
         //add to cache
         //edit LRU metadata
     }
+    return 1;
 
-
-
+}
