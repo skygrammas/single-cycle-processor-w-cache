@@ -13,6 +13,8 @@
 #include "memory.h"
 #include "stdio.h"
 #include "syscall.h"
+#include <math.h>
+
 
 struct cpu_context cpu_ctx;
 struct cpu_counter cpu_cntr;
@@ -773,16 +775,23 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
 int instructionCache(uint32_t *address, struct instructionCache *iCache) {
     struct Address current_request;
     parse_address(*address, *current_request);
+    uint32_t data;
     if ((iCache->way1[current_request->index].tag == current_request->tag) && (iCache->way1[current_request->index].valid)) {
+<<<<<<< HEAD
         //then it's a hit
         //increment LRU metadata
         uint32_t data = iCache->way1[current_request->index].data[current_request->offset];
         //return data
+=======
+        data = iCache->way1[current_request->index].data[current_request->offset];
+>>>>>>> fbe31bb13ec55618f05dc2e04e81d25df0d87f63
     } else {
-        //it's a miss
-        //add to cache
-        //edit LRU metadata
+        for (int i = 0; i < 4; i++){ // i < offset
+            iCache->way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i]
+        }
+        data = iCache->way1[current_request->index].data[current_request->offset];
     }
+    return data;
 }
 
 int dataCache(uint32_t *address, struct dataCache *dCache) {

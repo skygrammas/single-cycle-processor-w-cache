@@ -150,7 +150,14 @@ struct Address {
  uint32_t index;
 };
 
-struct block {
+struct directBlock {
+ uint32_t data[block_size];
+ uint32_t tag;
+ uint32_t valid;
+ uint32_t LRU; //2 bits
+};
+
+struct setBlock {
  blockArray data[block_size];
  uint32_t tag;
  uint32_t valid;
