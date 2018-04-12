@@ -787,11 +787,10 @@ int instructionCache(uint32_t *address, struct instructionCache *iCache) {
     return data;
 }
 
-int dataCache(uint32_t *address) {
+int dataCache(uint32_t *address, struct dataCache *dCache) {
     struct Address current_request;
-    struct dataCache dCache;
     parse_address(*address, *current_request);
-    if ((dCache->way1[current_request->index].tag == current_request->tag && (dCache->way1[current_request->index].valid)) {
+    if ((dCache->way1[current_request->index].tag == current_request->tag) && (dCache->way1[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
         uint32_t data = dCache->way1[current_request->index].data[current_request->offset];
