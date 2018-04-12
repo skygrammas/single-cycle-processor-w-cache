@@ -779,8 +779,11 @@ int instructionCache(uint32_t *address, struct instructionCache *iCache) {
     if ((iCache->way1[current_request->index].tag == current_request->tag) && (iCache->way1[current_request->index].valid)) {
         data = iCache->way1[current_request->index].data[current_request->offset];
     } else {
+        iCache->way1[current_request->index].tag = current_request->tag;
+        iCache->way1[current_request->index].valid = true;
         for (int i = 0; i < 4; i++){ // i < offset
-            iCache->way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i]
+            iCache->way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i];
+
         }
         data = iCache->way1[current_request->index].data[current_request->offset];
     }
