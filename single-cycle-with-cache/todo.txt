@@ -1,0 +1,11 @@
+ToDo:
+
+- Write instruction $
+- Write data $
+- Add instruction $ to the fetch stage (Deeshai)
+- Add data $ to the memory stage (only for store and load) (Deeshai)
+- implement LRU metadata (sky)
+- handle misses
+- Test instruction $
+- Test data $
+- handle evictions

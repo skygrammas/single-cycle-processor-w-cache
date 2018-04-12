@@ -773,10 +773,10 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
 int instructionCache(uint32_t *address, struct instructionCache *iCache) {
     struct Address current_request;
     parse_address(*address, *current_request);
-    if ((iCache.way1[current_request->index].tag == current_request->tag) && (iCache.way1[current_request->index].valid)) {
+    if ((iCache->way1[current_request->index].tag == current_request->tag) && (iCache->way1[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = iCache.way1[current_request->index].array1[current_request->offset];
+        uint32_t data = iCache->way1[current_request->index].array1[current_request->offset];
         //return data
     } else {
         //it's a miss
@@ -788,25 +788,25 @@ int instructionCache(uint32_t *address, struct instructionCache *iCache) {
 int dataCache(uint32_t *address, struct dataCache *dCache) {
     struct Address current_request;
     parse_address(*address, *current_request);
-    if ((dCache.way1[current_request->index].tag == current_request->tag && (dCache.way1[current_request->index].valid)) {
+    if ((dCache->way1[current_request->index].tag == current_request->tag) && (dCache->way1[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache.way1[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way1[current_request->index].array1[current_request->offset];
         //return data
-    } else if ((dCache.way2[current_request->index].tag == current_request->tag) && (dCache.way2[current_request->index].valid)) {
+    } else if ((dCache->way2[current_request->index].tag == current_request->tag) && (dCache->way2[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache.way2[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way2[current_request->index].array1[current_request->offset];
         //return data
-    } else if ((dCache.way3[current_request->index].tag == current_request->tag) && (dCache.way3[current_request->index].valid)) {
+    } else if ((dCache->way3[current_request->index].tag == current_request->tag) && (dCache->way3[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache.way3[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way3[current_request->index].array1[current_request->offset];
         //return data
-    } else if ((dCache.way4[current_request->index].tag == current_request->tag) && (dCache.way1[current_request->index].valid)) {
+    } else if ((dCache->way4[current_request->index].tag == current_request->tag) && (dCache->way4[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache.way4[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way4[current_request->index].array1[current_request->offset];
         //return data
     } else {
         //it's a miss
