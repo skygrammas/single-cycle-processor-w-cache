@@ -770,9 +770,8 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
     return 0;
 }
 
-int instructionCache(uint32_t *address) {
+int instructionCache(uint32_t *address, struct instructionCache *iCache) {
     struct Address current_request;
-    struct instructionCache iCache;
     parse_address(*address, *current_request);
     if ((iCache.way1[current_request->index].tag == current_request->tag) && (iCache.way1[current_request->index].valid)) {
         //then it's a hit
@@ -816,3 +815,5 @@ int dataCache(uint32_t *address) {
         //edit LRU metadata
     }
 }
+
+

@@ -176,5 +176,6 @@ int writeback( struct MEM_WB_buffer *in );
 
 int parse_instruction(uint32_t *bits, struct instruction *fields);
 int parse_address(uint32_t *requested_address, struct Address *fields);
-int instructionCache(uint32_t *address);
+int instructionCache(uint32_t *address, struct instructionCache *iCache;
+);
 int dataCache(uint32_t *address);
