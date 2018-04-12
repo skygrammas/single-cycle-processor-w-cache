@@ -776,7 +776,7 @@ int instructionCache(uint32_t *address, struct instructionCache *iCache) {
     if ((iCache->way1[current_request->index].tag == current_request->tag) && (iCache->way1[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = iCache->way1[current_request->index].array1[current_request->offset];
+        uint32_t data = iCache->way1[current_request->index].data[current_request->offset];
         //return data
     } else {
         //it's a miss
@@ -791,22 +791,22 @@ int dataCache(uint32_t *address, struct dataCache *dCache) {
     if ((dCache->way1[current_request->index].tag == current_request->tag) && (dCache->way1[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way1[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way1[current_request->index].data[current_request->offset];
         //return data
     } else if ((dCache->way2[current_request->index].tag == current_request->tag) && (dCache->way2[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way2[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way2[current_request->index].data[current_request->offset];
         //return data
     } else if ((dCache->way3[current_request->index].tag == current_request->tag) && (dCache->way3[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way3[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way3[current_request->index].data[current_request->offset];
         //return data
     } else if ((dCache->way4[current_request->index].tag == current_request->tag) && (dCache->way4[current_request->index].valid)) {
         //then it's a hit
         //increment LRU metadata
-        uint32_t data = dCache->way4[current_request->index].array1[current_request->offset];
+        uint32_t data = dCache->way4[current_request->index].data[current_request->offset];
         //return data
     } else {
         //it's a miss

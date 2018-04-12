@@ -129,7 +129,7 @@ struct MUX_output {
 };
 
 struct instructionCache {
- directBlock way1[256];
+ block way1[256];
 };
 
 struct dataCache {
@@ -151,7 +151,7 @@ struct Address {
 };
 
 struct block {
- blockArray array1[block_size];
+ blockArray data[block_size];
  uint32_t tag;
  uint32_t valid;
  uint32_t LRU; //2 bits
