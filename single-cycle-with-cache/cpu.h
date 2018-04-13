@@ -47,6 +47,7 @@ struct cpu_counter {
 
 extern struct cpu_context cpu_ctx;
 extern struct cpu_counter cpu_cntr;
+extern struct instructionCache iCache;
 
 struct Control {
     uint32_t MemToReg;
@@ -163,6 +164,7 @@ struct setBlock {
  uint32_t valid;
  uint32_t LRU; //2 bits
 };
+
 
 int ALU(struct ALU_input *in, struct ALU_output *out);
 int MUX(struct MUX_input *in, struct MUX_output *out);
