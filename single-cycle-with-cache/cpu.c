@@ -19,6 +19,7 @@
 struct cpu_context cpu_ctx;
 struct cpu_counter cpu_cntr;
 struct instructionCache iCache;
+struct dataCache dCache;
 
 int fetch( struct IF_ID_buffer *out )
 {

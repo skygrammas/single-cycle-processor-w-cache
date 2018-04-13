@@ -48,6 +48,7 @@ struct cpu_counter {
 extern struct cpu_context cpu_ctx;
 extern struct cpu_counter cpu_cntr;
 extern struct instructionCache iCache;
+extern struct dataCache dCache;
 
 struct Control {
     uint32_t MemToReg;
