@@ -768,9 +768,9 @@ int SIGN_EXTEND(uint32_t *in, uint32_t *out)
     return 0;
 }
 
-int parse_address(uint32_t *requested_address, struct Address *fields)
+int parse_instruction_address(uint32_t *requested_address, struct Address *fields)
 {
-    fields->index = (*requested_address << 20) >> 4;
+    fields->index = (*requested_address << 20) >> 22;
     fields->offset = (*requested_address << 28) >> 30;
     fields->tag = *requested_address >> 12;
     return 0;
@@ -778,19 +778,24 @@ int parse_address(uint32_t *requested_address, struct Address *fields)
 
 int instructionCache(uint32_t *address) {
     struct Address current_request;
-    parse_address(address, &current_request);
+    parse_instruction_address(address, &current_request);
     uint32_t data;
+    printf("index%d\n", current_request.index);
     if ((iCache.way1[current_request.index].tag == current_request.tag) && (iCache.way1[current_request.index].valid)) {
         data = iCache.way1[current_request.index].data[current_request.offset];
+        printf("Hit!!!\n");
     } else {
+        printf("Miss!!!\n");
         iCache.way1[current_request.index].tag = current_request.tag;
         iCache.way1[current_request.index].valid = 1;
         for (int i = 0; i < 4; i++){ // i < offset
 
             uint32_t index =  (uint32_t) floor(*address/4) * 4 ;
+            printf("index%d\n", index);
             iCache.way1[current_request.index].data[i] = instruction_memory[index + i];
         }
         data = iCache.way1[current_request.index].data[current_request.offset];
+        printf("data = %d\n\n", data);
     }
     return data;
 }

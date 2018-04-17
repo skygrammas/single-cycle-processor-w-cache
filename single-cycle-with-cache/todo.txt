@@ -2,10 +2,12 @@ ToDo:
 
 - Write instruction $ done!
 - Write data $
-- Add instruction $ to the fetch stage (Deeshai)
+- Add instruction $ to the fetch stage (Deeshai) done!
 - Add data $ to the memory stage (only for store and load) (Deeshai)
 - implement LRU metadata (sky)
-- handle misses
-- Test instruction $
+- handle misses instr$ done!
+- handle misses data $
+- Test instruction $ done!
 - Test data $
-- handle evictions
+- handle evictions data $
+- handle evictions instruction $ done!

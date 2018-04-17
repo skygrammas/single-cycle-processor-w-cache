@@ -176,11 +176,6 @@ struct Address {
  uint32_t index;
 };
 
-
-
-
-
-
 int ALU(struct ALU_input *in, struct ALU_output *out);
 int MUX(struct MUX_input *in, struct MUX_output *out);
 int SIGN_EXTEND(uint32_t *in, uint32_t *out);
@@ -192,6 +187,7 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out );
 int writeback( struct MEM_WB_buffer *in );
 
 int parse_instruction(uint32_t *bits, struct instruction *fields);
-int parse_address(uint32_t *requested_address, struct Address *fields);
+int parse_instruction_address(uint32_t *requested_address, struct Address *fields);
+
 int instructionCache(uint32_t *address);
 int dataCache(uint32_t *address);
