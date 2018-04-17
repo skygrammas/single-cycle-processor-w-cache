@@ -512,8 +512,6 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
             cpu_ctx.PC = cpu_ctx.GPR[instrn.rs];
         }
     }
-    printf("\nop:%d\n", out->op);
-
     return 0;
 }
 
@@ -526,7 +524,6 @@ int execute( struct ID_EX_buffer *in, struct EX_MEM_buffer *out )
     reg_dst_m_in.in0 = in->regDst0;
     reg_dst_m_in.in1 = in->regDst1;
     reg_dst_m_in.in2 = 31;
-    printf("\nregdst: %d\n", in->control_signals.RegDst);
     reg_dst_m_in.select = in->control_signals.RegDst;
     MUX(&reg_dst_m_in, &reg_dst_m_out);
     out->registerDestination = reg_dst_m_out.output;
@@ -587,9 +584,7 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
 {
     // If MemRead then get data from data memory
     if (in->control_signals.MemRead == 1) {
-        printf("Alu result: %d", in->ALU_result);
       if (in->ALU_result >= 1024) {
-        printf("Memory address out of range\n");
       } else {
         out->data = data_memory[in->ALU_result];
       }
@@ -599,12 +594,9 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
       data_memory[in->ALU_result] = in->read_data_2;
     }
 
-        printf("BRANCH DEBUG\nnext:%d,sign_extend:%d\n", in->next_pc, in->sign_extend);
     // If Branch then update pc
     if (in->ALU_zero == 1 && in->control_signals.Branch == 1) {
-        printf("BRANCH DEBUG\nnext:%d,sign_extend:%d\n", in->next_pc, in->sign_extend);
         cpu_ctx.PC = in->next_pc + in->sign_extend;
-        printf("PC:%d", cpu_ctx.PC);
     } else {
         cpu_ctx.PC += 1;
     }
@@ -613,7 +605,6 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
     out->ALU_result = in->ALU_result;
     out->control_signals = in->control_signals;
 
-    printf("result: %d\n", out->ALU_result);
     out->next_pc = in->next_pc;
     return 0;
 }
@@ -710,7 +701,6 @@ int ALU(struct ALU_input *in, struct ALU_output *out)
             out->zero = 0;
             break;
     }
-    printf("ALU DEBUG\nin1:%d,in2:%d,out:%d\n", in->in1, in->in2, out->result);
     return 0;
 }
 
@@ -727,7 +717,6 @@ int MUX(struct MUX_input *in, struct MUX_output *out)
             out->output = in->in2;
             break;
     }
-    printf("MUX DEBUG\nselect:%d\nin0:%d, in1:%d, in2:%d, out:%d\n", in->select, in->in0, in->in1, in->in2, out->output);
     return 0;
 }
 
@@ -780,29 +769,30 @@ int instructionCache(uint32_t *address) {
     struct Address current_request;
     parse_instruction_address(address, &current_request);
     uint32_t data;
-    printf("index%d\n", current_request.index);
     if ((iCache.way1[current_request.index].tag == current_request.tag) && (iCache.way1[current_request.index].valid)) {
         data = iCache.way1[current_request.index].data[current_request.offset];
-        printf("Hit!!!\n");
     } else {
-        printf("Miss!!!\n");
         iCache.way1[current_request.index].tag = current_request.tag;
         iCache.way1[current_request.index].valid = 1;
         for (int i = 0; i < 4; i++){ // i < offset
             uint32_t index =  (uint32_t) floor(*address/4) * 4 ;
-            printf("index%d\n", index);
             iCache.way1[current_request.index].data[i] = instruction_memory[index + i];
         }
         data = iCache.way1[current_request.index].data[current_request.offset];
-        printf("data = %d\n\n", data);
     }
     return data;
 }
 
+int parse_instruction_address(uint32_t *requested_address, struct Address *fields)
+{
+    fields->index = (*requested_address << 22) >> 22;
+    fields->tag = *requested_address >> 8;
+    return 0;
+}
 int dataCache(uint32_t *address) {
     struct Address current_request;
     uint32_t data;
-    // parse_address(address, &current_request);
+    parse_instruction_address(address, &current_request);
     if ((dCache.way[0][current_request.index].tag == current_request.tag) && (dCache.way1[current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
@@ -832,7 +822,12 @@ int dataCache(uint32_t *address) {
         //add to cache
 
         dCache.way[dCache.LRU[0]][current_request.index].data = data_memory;
-        incrementLRU(); -> dCache.LRU[0]=dCache.LRU[1]
+        int temp;
+        temp = dCache.LRU[0];
+        dCache.LRU[0] = dCache.LRU[1];
+        dCache.LRU[1] = dCache.LRU[2];
+        dCache.LRU[2] = dCache.LRU[3];
+        dCache.LRU[3] = temp;
         //edit LRU metadata
 
 
@@ -855,7 +850,4 @@ incrementLRU(uint32_t way) {
     }
     LRU[3] = temp;
 }
-
-
-
 
