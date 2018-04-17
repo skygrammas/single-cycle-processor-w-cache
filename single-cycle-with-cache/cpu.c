@@ -584,9 +584,14 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
 {
     // If MemRead then get data from data memory
     if (in->control_signals.MemRead == 1) {
-      if (in->ALU_result >= 1024) {
+      if (in->ALU_result >= 1024 && in->ALU_result < 0) {
       } else {
-        out->data = dataCache(&in->ALU_result);
+        printf("ALUUU:::: %d", in->ALU_result);
+
+        uint32_t result = in->ALU_result;
+        out->data = dataCache(&result);
+        printf("resutl:::: %x", result);
+        // out->data = data_memory[in->ALU_result];
       }
     }
     // If MemWrite then write to the data memeory
@@ -749,10 +754,10 @@ int parse_instruction(uint32_t *bits, struct instruction *fields) {
 
 int SIGN_EXTEND(uint32_t *in, uint32_t *out)
 {
-    if (*in > 0) {
-        *out = *in | 0x00000000;
-    } else {
+    if ((*in >> 15) == 1) {
         *out = *in | 0xFFFF0000;
+    } else {
+        *out = *in | 0x00000000;
     }
     return 0;
 }
@@ -790,31 +795,42 @@ int parse_data_address(uint32_t *requested_address, struct Address *fields)
     fields->tag = *requested_address >> 8;
     return 0;
 }
+
 int dataCache(uint32_t *address)
 {
     struct Address current_request;
     uint32_t data;
     parse_data_address(address, &current_request);
-    if ((dCache.way[0][current_request.index].tag == current_request.tag) && (dCache.way[1][current_request.index].valid)) {
+    if ((dCache.way[0][current_request.index].tag == current_request.tag) && (dCache.way[0][current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
         data = dCache.way[0][current_request.index].data;
         incrementLRU(0);
         //return data
-    } else if ((dCache.way[1][current_request.index].tag == current_request.tag) && (dCache.way[2][current_request.index].valid)) {
+    } else if ((dCache.way[1][current_request.index].tag == current_request.tag) && (dCache.way[1][current_request.index].valid)) {
         //then it's a hit
         //increment LRU metadata
         data = dCache.way[1][current_request.index].data;
         incrementLRU(1);
         //return data
-    } else if ((dCache.way[2][current_request.index].tag == current_request.tag) && (dCache.way[3][current_request.index].valid)) {
+    } else if ((dCache.way[2][current_request.index].tag == current_request.tag) && (dCache.way[2][current_request.index].valid)) {
+        //then it's a hit
+        //increment LRU metadata
         data = dCache.way[2][current_request.index].data;
         incrementLRU(2);
-    } else if ((dCache.way[3][current_request.index].tag == current_request.tag) && (dCache.way[4][current_request.index].valid)) {
+        //return data
+    } else if ((dCache.way[3][current_request.index].tag == current_request.tag) && (dCache.way[3][current_request.index].valid)) {
+        //then it's a hit
+        //increment LRU metadata
         data = dCache.way[3][current_request.index].data;
         incrementLRU(3);
     } else {
-        dCache.way[dCache.LRU[0]][current_request.index].data = data_memory[&address];
+        //it's a miss
+        //add to cache
+        dCache.way[dCache.LRU[0]][current_request.index].data = data_memory[*address];
+        dCache.way[dCache.LRU[0]][current_request.index].tag = current_request.tag;
+        dCache.way[dCache.LRU[0]][current_request.index].valid = 1;
+        data = dCache.way[dCache.LRU[0]][current_request.index].data;
         int temp;
         temp = dCache.LRU[0];
         dCache.LRU[0] = dCache.LRU[1];
@@ -823,20 +839,34 @@ int dataCache(uint32_t *address)
         dCache.LRU[3] = temp;
     }
     return data;
-    // return data;
 }
 
-int incrementLRU(uint32_t way)
+int dataCache(uint32_t *address, uint32_t *info)
 {
+    dCache.way[dCache.LRU[0]][current_request.index].data = &info;
+    dCache.way[dCache.LRU[0]][current_request.index].tag = current_request.tag;
+    dCache.way[dCache.LRU[0]][current_request.index].valid = 1;
+    data = dCache.way[dCache.LRU[0]][current_request.index].data;
+    int temp;
+    temp = dCache.LRU[0];
+    dCache.LRU[0] = dCache.LRU[1];
+    dCache.LRU[1] = dCache.LRU[2];
+    dCache.LRU[2] = dCache.LRU[3];
+    dCache.LRU[3] = temp;
+
+    data_memory[&address] = &info;
+    return 0;
+}
+
+int incrementLRU(uint32_t way) {
     int i = 0;
     while (dCache.LRU[i] != way) {
         i++;
     }
-    temp = dCache.LRU[i];
+    int temp = dCache.LRU[i];
     for (int j =i; j < 3; j++) {
-        dCache.LRU[j] = dCache.LRU[j+1]
+        dCache.LRU[j] = dCache.LRU[j+1];
     }
     dCache.LRU[3] = temp;
     return 0;
 }
-
