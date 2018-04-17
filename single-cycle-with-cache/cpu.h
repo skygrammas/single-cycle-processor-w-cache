@@ -130,13 +130,6 @@ struct MUX_output {
  uint32_t output;
 };
 
-struct blockArray {
- uint32_t LRU_1;
- uint32_t LRU_2;
- uint32_t LRU_3;
- uint32_t LRU_4;
-};
-
 struct directBlock {
  uint32_t data[4];
  uint32_t tag;
@@ -144,7 +137,7 @@ struct directBlock {
 };
 
 struct setBlock {
- struct blockArray data;
+ uint32_t data;
  uint32_t tag;
  uint32_t valid;
 };
@@ -154,10 +147,8 @@ struct instructionCache {
 };
 
 struct dataCache {
- struct setBlock way1[256];
- struct setBlock way2[256];
- struct setBlock way3[256];
- struct setBlock way4[256];
+ struct setBlock way[4][256];
+ uint32_t LRU[4];
 };
 
 struct L1Cache {
@@ -183,6 +174,7 @@ int writeback( struct MEM_WB_buffer *in );
 
 int parse_instruction(uint32_t *bits, struct instruction *fields);
 int parse_instruction_address(uint32_t *requested_address, struct Address *fields);
+int parse_data_address(uint32_t *requested_address, struct Address *fields);
 
 int instructionCache(uint32_t *address);
 int dataCache(uint32_t *address);
