@@ -596,7 +596,8 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
     }
     // If MemWrite then write to the data memeory
     if (in->control_signals.MemWrite == 1) {
-      data_memory[in->ALU_result] = in->read_data_2;
+      uint32_t result = in->ALU_result;
+      dataCacheStore(&result, &in->read_data_2);
     }
 
     // If Branch then update pc
@@ -841,12 +842,12 @@ int dataCache(uint32_t *address)
     return data;
 }
 
-int dataCache(uint32_t *address, uint32_t *info)
+int dataCacheStore(uint32_t *address, uint32_t *info)
 {
     struct Address current_request;
     //uint32_t data;
     parse_data_address(address, &current_request);
-    dCache.way[dCache.LRU[0]][current_request.index].data = &info;
+    dCache.way[dCache.LRU[0]][current_request.index].data = *info;
     dCache.way[dCache.LRU[0]][current_request.index].tag = current_request.tag;
     dCache.way[dCache.LRU[0]][current_request.index].valid = 1;
     //data = dCache.way[dCache.LRU[0]][current_request.index].data;
@@ -857,7 +858,7 @@ int dataCache(uint32_t *address, uint32_t *info)
     dCache.LRU[2] = dCache.LRU[3];
     dCache.LRU[3] = temp;
 
-    data_memory[&address] = &info;
+    data_memory[*address] = *info;
     return 0;
 }
 
