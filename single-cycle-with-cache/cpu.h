@@ -178,3 +178,5 @@ int parse_data_address(uint32_t *requested_address, struct Address *fields);
 
 int instructionCache(uint32_t *address);
 int dataCache(uint32_t *address);
+
+int incrementLRU(uint32_t way);
