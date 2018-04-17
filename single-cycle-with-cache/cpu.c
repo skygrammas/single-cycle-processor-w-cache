@@ -843,10 +843,13 @@ int dataCache(uint32_t *address)
 
 int dataCache(uint32_t *address, uint32_t *info)
 {
+    struct Address current_request;
+    //uint32_t data;
+    parse_data_address(address, &current_request);
     dCache.way[dCache.LRU[0]][current_request.index].data = &info;
     dCache.way[dCache.LRU[0]][current_request.index].tag = current_request.tag;
     dCache.way[dCache.LRU[0]][current_request.index].valid = 1;
-    data = dCache.way[dCache.LRU[0]][current_request.index].data;
+    //data = dCache.way[dCache.LRU[0]][current_request.index].data;
     int temp;
     temp = dCache.LRU[0];
     dCache.LRU[0] = dCache.LRU[1];
