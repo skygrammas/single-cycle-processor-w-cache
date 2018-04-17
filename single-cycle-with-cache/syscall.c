@@ -27,13 +27,17 @@ int syscall() {
             sys_string(cpu_ctx.GPR[4]);
             break;
     }
-
-    return 0;
+    
+    return 0; 
 }
 
 int sys_exit() {
-	printf("Exiting\n");
-	exit(0);
+    printf("Exiting\n");
+    
+    for (int i = 0; i < 1024; i++ ) {
+        printf("%x\n", data_memory[i]);
+    }
+    exit(0);
 }
 
 int sys_int(uint32_t reg) {
