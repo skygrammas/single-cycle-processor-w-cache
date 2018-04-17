@@ -829,6 +829,8 @@ int dataCache(uint32_t *address) {
         //add to cache
         printf("address:::::: %x\n", *address);
         dCache.way[dCache.LRU[0]][current_request.index].data = data_memory[*address];
+        dCache.way[dCache.LRU[0]][current_request.index].tag = current_request.tag;
+        dCache.way[dCache.LRU[0]][current_request.index].valid = 1;
         data = dCache.way[dCache.LRU[0]][current_request.index].data;
         int temp;
         temp = dCache.LRU[0];

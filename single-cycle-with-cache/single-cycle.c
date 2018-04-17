@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
     for ( i = 0; i < 256; i++ ) {
         iCache.way1[i].valid = 0;
         for ( j = 0; j<4; j++ ) {
-        	dCache.way[j][i].valid=0;
+        	dCache.way[j][i].valid = 0;
         }
     }
     
