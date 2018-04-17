@@ -21,7 +21,6 @@
 
 int main( int argc, char *argv[] )
 {
-	printf("tst");
 	FILE *f;
 	struct IF_ID_buffer if_id;
 	struct ID_EX_buffer id_ex;
@@ -40,18 +39,18 @@ int main( int argc, char *argv[] )
 		data_memory[i] = 0;
 		stack_memory[i] = 0;
 	}
-    
+
     for ( i = 0; i < 256; i++ ) {
         iCache.way1[i].valid = 0;
         for ( j = 0; j<4; j++ ) {
-        	dCache.way[j][i].valid=0;
+        	dCache.way[j][i].valid = 0;
         }
     }
-    
+
     for ( i = 0; i < 4; i++ ) {
     	dCache.LRU[i] = i;
     }
-    
+
 
 	/* Initialize the counters */
 	  cpu_cntr.cycle = 0;
@@ -116,39 +115,11 @@ int main( int argc, char *argv[] )
 		printf("reg %d: %d\n", i, cpu_ctx.GPR[i]);
 	}
 	}
-    
+
     for ( i = 0; i < 1024; i++ ) {
 #if defined(DEBUG)
 		printf("%u\n", data_memory[i]);
 #endif
 	}
-	
-
-	printf("Cycle counter :%d\n", cpu_cntr.cycle);
-	printf("add :%d\n", cpu_cntr.add_c);
-	printf("and :%d\n", cpu_cntr.and_c);
-	printf("nor :%d\n", cpu_cntr.nor_c);
-	printf("or :%d\n", cpu_cntr.or_c);
-	printf("slt :%d\n", cpu_cntr.slt_c);
-	printf("sll :%d\n", cpu_cntr.sll_c);
-	printf("srl :%d\n", cpu_cntr.srl_c);
-	printf("sub :%d\n", cpu_cntr.sub_c);
-	printf("sra :%d\n", cpu_cntr.sra_c);
-	printf("xor :%d\n", cpu_cntr.xor_c);
-	printf("syscall: %d\n", cpu_cntr.syscall_c);
-	printf("addi :%d\n", cpu_cntr.addi_c);
-	printf("andi :%d\n", cpu_cntr.andi_c);
-	printf("beq :%d\n", cpu_cntr.beq_c);
-	printf("bne :%d\n", cpu_cntr.bne_c);
-	printf("lui :%d\n", cpu_cntr.lui_c);
-	printf("lw :%d\n", cpu_cntr.lw_c);
-	printf("ori :%d\n", cpu_cntr.ori_c);
-	printf("slti :%d\n", cpu_cntr.slti_c);
-	printf("xori :%d\n", cpu_cntr.xori_c);
-	printf("sw :%d\n", cpu_cntr.sw_c);
-	printf("j : %d\n", cpu_cntr.j_c);
-	printf("jal :%d\n", cpu_cntr.jal_c);
-	printf("jr :%d\n", cpu_cntr.jr_c);
-
 	return 0;
 }

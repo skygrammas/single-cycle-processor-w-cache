@@ -15,6 +15,7 @@
 #include "syscall.h"
 #include <math.h>
 
+#define ENABLE_L1_CACHES
 
 struct cpu_context cpu_ctx;
 struct cpu_counter cpu_cntr;
@@ -26,14 +27,15 @@ int fetch( struct IF_ID_buffer *out )
     // Grab pc from global state.
     uint32_t pc = cpu_ctx.PC;
 
+#if defined(ENABLE_L1_CACHES)
     // Grab instruction at pc from memory.
     uint32_t instruction = instructionCache(&pc);
+#else
+    uint32_t instruction = instruction_memory[pc/4];
 
+#endif
     // Increment PC.
-    pc = pc + 1;
-
-
-
+    pc = pc + 4;
     out->next_pc = pc;
     out->instruction = instruction;
     return 0;
@@ -48,6 +50,9 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
     out->read_data_1 = cpu_ctx.GPR[instrn.rs];
     out->read_data_2 = cpu_ctx.GPR[instrn.rt];
     cpu_cntr.cycle += 1;
+
+    printf("op::%d\n", instrn.op);
+
 
     switch (instrn.op) {
     //r-type
@@ -456,6 +461,7 @@ int decode( struct IF_ID_buffer *in, struct ID_EX_buffer *out )
         out->rd = instrn.rd;
         out->rs = instrn.rs;
         cpu_cntr.sw_c += 1;
+        printf("swwwwww\n");
         break;
     //j-type
     //j
@@ -568,7 +574,6 @@ int execute( struct ID_EX_buffer *in, struct EX_MEM_buffer *out )
             post.zero = 1;
         }
     }
-
     out->control_signals = in->control_signals;
     out->next_pc = in->next_pc;
     out->ALU_result = post.result;
@@ -586,31 +591,36 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
     if (in->control_signals.MemRead == 1) {
       if (in->ALU_result >= 1024 && in->ALU_result < 0) {
       } else {
-        printf("ALUUU:::: %d", in->ALU_result);
-
         uint32_t result = in->ALU_result;
+#if defined(ENABLE_L1_CACHES)
+    // Grab instruction at pc from memory.
         out->data = dataCache(&result);
-        printf("resutl:::: %x", result);
-        // out->data = data_memory[in->ALU_result];
+#else
+        out->data = data_memory[result];
+
+#endif
       }
     }
     // If MemWrite then write to the data memeory
     if (in->control_signals.MemWrite == 1) {
-      uint32_t result = in->ALU_result;
-      dataCacheStore(&result, &in->read_data_2);
-    }
+        uint32_t result = in->ALU_result;
+#if defined(ENABLE_L1_CACHES)
+    // Grab instruction at pc from memory.
+        out->data = dataCache(&result);
+#else
+        data_memory[result] = in->read_data_2;
 
+#endif
+    }
     // If Branch then update pc
     if (in->ALU_zero == 1 && in->control_signals.Branch == 1) {
         cpu_ctx.PC = in->next_pc + in->sign_extend;
     } else {
-        cpu_ctx.PC += 1;
+        cpu_ctx.PC += 4;
     }
-
     out->registerDestination = in->registerDestination;
     out->ALU_result = in->ALU_result;
     out->control_signals = in->control_signals;
-
     out->next_pc = in->next_pc;
     return 0;
 }
@@ -627,7 +637,7 @@ int writeback( struct MEM_WB_buffer *in )
         //cpu_ctx.GPR[in->registerDestination] = in->ALU_result;
     }
     if (in->control_signals.MemToReg == 2) {
-        cpu_ctx.GPR[in->registerDestination] = in->next_pc + 1;
+        cpu_ctx.GPR[in->registerDestination] = in->next_pc + 4;
     }
     if (in->control_signals.MemToReg == 1) {
         cpu_ctx.GPR[in->registerDestination] = in->data;
@@ -727,6 +737,7 @@ int MUX(struct MUX_input *in, struct MUX_output *out)
 }
 
 int parse_instruction(uint32_t *bits, struct instruction *fields) {
+    //parses instruction for fields of address
     fields->op = *bits >> 26;
 
     fields->rs = *bits << 6;
@@ -755,6 +766,7 @@ int parse_instruction(uint32_t *bits, struct instruction *fields) {
 
 int SIGN_EXTEND(uint32_t *in, uint32_t *out)
 {
+    //sign extender
     if ((*in >> 15) == 1) {
         *out = *in | 0xFFFF0000;
     } else {
@@ -765,33 +777,40 @@ int SIGN_EXTEND(uint32_t *in, uint32_t *out)
 
 int parse_instruction_address(uint32_t *requested_address, struct Address *fields)
 {
-    fields->index = (*requested_address << 20) >> 22;
+    //breaks up instruction cache requested address
+    fields->index = (*requested_address << 20) >> 24;
     fields->offset = (*requested_address << 28) >> 30;
     fields->tag = *requested_address >> 12;
     return 0;
 }
 
-int instructionCache(uint32_t *address)
+int instructionCache(uint32_t *pc)
 {
     struct Address current_request;
-    parse_instruction_address(address, &current_request);
+    parse_instruction_address(pc, &current_request);
     uint32_t data;
     if ((iCache.way1[current_request.index].tag == current_request.tag) && (iCache.way1[current_request.index].valid)) {
+        //it's a hit
+        //get the data
         data = iCache.way1[current_request.index].data[current_request.offset];
     } else {
+        //it's a miss
+        //add it to cache
         iCache.way1[current_request.index].tag = current_request.tag;
         iCache.way1[current_request.index].valid = 1;
+        //add all words within range to cache too
         for (int i = 0; i < 4; i++){ // i < offset
-            uint32_t index =  (uint32_t) floor(*address/4) * 4 ;
+            uint32_t index =  (uint32_t) floor(*pc/4) ;
             iCache.way1[current_request.index].data[i] = instruction_memory[index + i];
         }
         data = iCache.way1[current_request.index].data[current_request.offset];
-    }
+    } //return the data
     return data;
 }
 
 int parse_data_address(uint32_t *requested_address, struct Address *fields)
 {
+    //breaks up data cache requested address
     fields->index = (*requested_address << 22) >> 22;
     fields->tag = *requested_address >> 8;
     return 0;
@@ -838,31 +857,31 @@ int dataCache(uint32_t *address)
         dCache.LRU[1] = dCache.LRU[2];
         dCache.LRU[2] = dCache.LRU[3];
         dCache.LRU[3] = temp;
-    }
+    } //return the data
     return data;
 }
 
 int dataCacheStore(uint32_t *address, uint32_t *info)
 {
+    //store word data access
     struct Address current_request;
-    //uint32_t data;
     parse_data_address(address, &current_request);
+    //add to cache
     dCache.way[dCache.LRU[0]][current_request.index].data = *info;
     dCache.way[dCache.LRU[0]][current_request.index].tag = current_request.tag;
     dCache.way[dCache.LRU[0]][current_request.index].valid = 1;
-    //data = dCache.way[dCache.LRU[0]][current_request.index].data;
     int temp;
     temp = dCache.LRU[0];
     dCache.LRU[0] = dCache.LRU[1];
     dCache.LRU[1] = dCache.LRU[2];
     dCache.LRU[2] = dCache.LRU[3];
     dCache.LRU[3] = temp;
-
     data_memory[*address] = *info;
     return 0;
 }
 
 int incrementLRU(uint32_t way) {
+    //helps keep track of the LRU within block
     int i = 0;
     while (dCache.LRU[i] != way) {
         i++;

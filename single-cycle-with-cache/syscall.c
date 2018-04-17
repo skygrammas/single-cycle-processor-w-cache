@@ -32,8 +32,12 @@ int syscall() {
 }
 
 int sys_exit() {
-	printf("Exiting\n");
-	exit(0);
+    printf("Exiting\n");
+
+    for (int i = 0; i < 1024; i++ ) {
+        printf("%x\n", data_memory[i]);
+    }
+    exit(0);
 }
 
 int sys_int(uint32_t reg) {
@@ -53,13 +57,5 @@ int sys_string(uint32_t a0) {
         }
         index++;
     }
-
-    /*
-    printf("printstring");
-
-    for (int i = 0; i < 10; i++) {
-        printf("%u", data_memory[i]);
-    }
-    */
     return 0;
 }
