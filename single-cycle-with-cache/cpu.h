@@ -130,7 +130,6 @@ struct MUX_output {
  uint32_t output;
 };
 
-
 struct blockArray {
  uint32_t LRU_1;
  uint32_t LRU_2;
@@ -139,24 +138,20 @@ struct blockArray {
 };
 
 struct directBlock {
-
  uint32_t data[4];
  uint32_t tag;
  uint32_t valid;
 };
 
 struct setBlock {
-
- struct blockArray data[4];
+ struct blockArray data;
  uint32_t tag;
  uint32_t valid;
- uint32_t LRU; //2 bits
 };
 
 struct instructionCache {
  struct directBlock way1[256];
 };
-
 
 struct dataCache {
  struct setBlock way1[256];

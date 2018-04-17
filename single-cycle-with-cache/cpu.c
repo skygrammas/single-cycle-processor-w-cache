@@ -32,7 +32,7 @@ int fetch( struct IF_ID_buffer *out )
     // Increment PC.
     pc = pc + 1;
 
-    
+
 
     out->next_pc = pc;
     out->instruction = instruction;
@@ -611,7 +611,7 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
 
     out->registerDestination = in->registerDestination;
     out->ALU_result = in->ALU_result;
-    out->control_signals = in->control_signals; 
+    out->control_signals = in->control_signals;
 
     printf("result: %d\n", out->ALU_result);
     out->next_pc = in->next_pc;
@@ -789,7 +789,7 @@ int instructionCache(uint32_t *address) {
         iCache.way1[current_request.index].tag = current_request.tag;
         iCache.way1[current_request.index].valid = 1;
         for (int i = 0; i < 4; i++){ // i < offset
-
+            iCache.way1[current_request->index].data[i] = instruction_memory[(floor(address/4)*4) + i];
             uint32_t index =  (uint32_t) floor(*address/4) * 4 ;
             printf("index%d\n", index);
             iCache.way1[current_request.index].data[i] = instruction_memory[index + i];
@@ -828,6 +828,5 @@ int dataCache(uint32_t *address) {
         //add to cache
         //edit LRU metadata
     }
-    return 1;
-
+    return data;
 }
