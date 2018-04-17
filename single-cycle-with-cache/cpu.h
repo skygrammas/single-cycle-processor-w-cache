@@ -154,10 +154,7 @@ struct instructionCache {
 };
 
 struct dataCache {
- struct setBlock way1[256];
- struct setBlock way2[256];
- struct setBlock way3[256];
- struct setBlock way4[256];
+ struct setBlock way[4][256];
 };
 
 struct L1Cache {
