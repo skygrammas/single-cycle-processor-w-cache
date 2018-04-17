@@ -586,7 +586,7 @@ int memory( struct EX_MEM_buffer *in, struct MEM_WB_buffer *out )
     if (in->control_signals.MemRead == 1) {
       if (in->ALU_result >= 1024) {
       } else {
-        out->data = data_memory[in->ALU_result];
+        out->data = dataCache(&in->ALU_result);
       }
     }
     // If MemWrite then write to the data memeory
@@ -821,7 +821,7 @@ int dataCache(uint32_t *address) {
         //it's a miss
         //add to cache
 
-        dCache.way[dCache.LRU[0]][current_request.index].data = data_memory;
+        dCache.way[dCache.LRU[0]][current_request.index].data = data_memory[];
         int temp;
         temp = dCache.LRU[0];
         dCache.LRU[0] = dCache.LRU[1];
@@ -838,13 +838,14 @@ int dataCache(uint32_t *address) {
 
 incrementLRU(uint32_t way) {
     int i = 0;
+
     while (LRU[i] != way) {
         i++;
     }
 
-    temp = LRU[i]
+    temp = LRU[i];
 
-    for (j =i; j < 3; j++) {
+    for (int j =i; j < 3; j++) {
         LRU[j] = LRU[j+1]
 
     }
