@@ -770,7 +770,7 @@ int SIGN_EXTEND(uint32_t *in, uint32_t *out)
 
 int parse_address(uint32_t *requested_address, struct Address *fields)
 {
-    fields->index = (*requested_address << 20) >> 4;
+    fields->index = (*requested_address << 20) >> 22;
     fields->offset = (*requested_address << 28) >> 30;
     fields->tag = *requested_address >> 12;
     return 0;
@@ -823,5 +823,5 @@ int dataCache(uint32_t *address) {
         //add to cache
         //edit LRU metadata
     }
-    return 0;
+    return data;
 }

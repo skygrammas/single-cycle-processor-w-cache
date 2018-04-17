@@ -144,10 +144,9 @@ struct directBlock {
 };
 
 struct setBlock {
- struct blockArray data[4];
+ struct blockArray data;
  uint32_t tag;
  uint32_t valid;
- uint32_t LRU; //2 bits
 };
 
 struct instructionCache {
